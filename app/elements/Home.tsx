@@ -9,12 +9,10 @@ import {
     DrawerTitle,
     DrawerTrigger,
   } from "@/components/ui/drawer"
-import Menu from "@/elements/Menu";
+import Menu from "./Menu";
   
 export default function Home()
 {
-    const data =auth();
-    // console.log(data);
     return (
         <div className="z-2 sm:w-screen">
           <Drawer direction="left" >

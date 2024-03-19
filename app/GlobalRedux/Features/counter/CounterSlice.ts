@@ -1,29 +1,31 @@
+"use client"
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { stat } from 'fs'
 
-export interface CounterState {
+export interface BankState {
   createdExams: Object[],
   givenExams: Object[]
 }
 
-const initialState: CounterState = {
+const initialState: BankState = {
   createdExams: [],
   givenExams:[]
 }
 
 export const bank = createSlice({
-  name: 'counter',
+  name: 'bank',
   initialState,
   reducers: {
     setMyExams: (state, action: PayloadAction<Object>)=>{
-      state.givenExams=action.payload as any;
+      const arr=action.payload;
+      state.givenExams=[...arr];
     },
     setCreatedExams:(state,action:PayloadAction<Object>)=>{
       state.createdExams=[action.payload,...state.createdExams]
     }
   },
 })
-export const { } = bank.actions
+export const { setMyExams,setCreatedExams} = bank.actions
 
 export default bank.reducer

@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation"
 export default function Menu()
 {
     const path = usePathname();
-    console.log(path)
+    // console.log(path)
     const arr=[{
         title: 'Dashboard', 
         href: "/dashboard"

@@ -19,7 +19,6 @@ export default function CreateExam()
           Authorization: data.userId,
         },
       });
-      console.log(response);
   }
   const [Name,setName]= useState("");
   const [StartTime,setStartTime]= useState("");

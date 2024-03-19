@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
-import Home from "@/elements/Home";
-
+import { Providers } from "./GlobalRedux/provider";
+import Home from "./elements/Home";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -17,15 +17,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+   
     <ClerkProvider>
     <html lang="en">
       <body className={inter.className}>
+      <Providers>
        <div className="z-2">
        <Home/> 
        </div>
         {children}
+        </Providers>
         </body>
     </html>
     </ClerkProvider>
+    
   );
 }
