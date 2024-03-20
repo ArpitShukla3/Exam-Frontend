@@ -8,6 +8,7 @@ import Link from "next/link";
 export default function CustomCards({ isGivenExamCard }: { isGivenExamCard: boolean }) {
     type createdExamsType = { Name: string, hashID: string, endTime: string, StartTime: string, TimeLimit: string }[];
     const details = useSelector((state: RootState) => (isGivenExamCard ? state.examBank.givenExams : state.examBank.createdExams[0]));
+    const type  =(isGivenExamCard) ? 'exam':"item";
     return (
         <>
             <div className="cards">
@@ -15,7 +16,7 @@ export default function CustomCards({ isGivenExamCard }: { isGivenExamCard: bool
                     details && details.map((item, index) => {
                         return (
                             <div className="card red" key={index}>
-                                <Link href={`/item/${index}`}>
+                                <Link href={`/${type}/${index}`}>
                                     <p className="tip">{item.Name}</p>
                                     <div className="second-text">
                                         <h3>Start Time : {item.StartTime}</h3>
