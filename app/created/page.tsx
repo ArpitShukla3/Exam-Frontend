@@ -62,7 +62,7 @@ export default function Home() {
         </div>
       </div>
       <div className="p-2 lg:mt-20">
-        {loaded && <CustomCards  isGivenExamCard={false}/>}
+        {loaded && <CustomCards  type="item"/>}
       </div>
     </div>
   );

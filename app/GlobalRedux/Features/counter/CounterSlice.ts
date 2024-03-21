@@ -31,7 +31,7 @@ export const bank = createSlice({
       state.createdExams=[action.payload,...state.createdExams]
     },
     setQuestionsRedux:(state,action)=>{
-      state.questions=[state.questions,...action.payload];
+        state.questions=[...action.payload];
     },
     setSelectedExam:(state,action)=>{
       state.selectedExam=action.payload

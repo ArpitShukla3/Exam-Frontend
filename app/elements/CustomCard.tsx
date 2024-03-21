@@ -6,10 +6,10 @@ import { RootState } from "@/app/GlobalRedux/store";
 import Link from "next/link";
 import { setSelectedExam } from "../GlobalRedux/Features/counter/CounterSlice";
 
-export default function CustomCards({ isGivenExamCard }: { isGivenExamCard: boolean }) {
+export default function CustomCards({ type }: { type: string }) {  // type -> "exam","upload","item"
     type createdExamsType = { Name: string, hashID: string, endTime: string, StartTime: string, TimeLimit: string }[];
-    const details = useSelector((state: RootState) => (isGivenExamCard ? state.examBank.givenExams : state.examBank.createdExams[0]));
-    const type  =(isGivenExamCard) ? 'exam':"item";
+    const details = useSelector((state: RootState) => (type=="item"||type=="uploadAnswer") ? state.examBank.createdExams[0]:state.examBank.givenExams);
+    // const type  =(isGivenExamCard) ? 'exam':"item";
     const dispatch = useDispatch();
     function setExam({item}:{item:Object}){
         dispatch(setSelectedExam(item))

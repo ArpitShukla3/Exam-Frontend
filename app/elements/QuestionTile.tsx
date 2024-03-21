@@ -2,14 +2,18 @@ import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useAuth } from "@clerk/nextjs";
 import axios from "axios";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 export default function QuestionTile({ item, index }: { item: any, index: number }) {
+    const path =usePathname();
     const [value, setValue] = useState("");
     const [submitBtnStyle,setSubmitBtnStyle] = useState("bg-gray-600");
     const [imageUrl, setImageUrl] = useState(item.image);
     const [reloadCount, setReloadCount] = useState(0);
     const data =useAuth();
+    const examID =useSelector((state)=>state.examBank.selectedExam._id);
     const handleImageError = () => {
         if (reloadCount < 1) {
             // Increment reload count and attempt to reload the image
@@ -29,8 +33,10 @@ export default function QuestionTile({ item, index }: { item: any, index: number
         const doc={
             hash:item.hashID,
             questionId : item._id,
+            examID:examID
         }
-        const response = await axios.post("http://localhost:3001/exam/resetAnswer",doc,{
+        const url =(path.split('/')[1]=='uploadAnswer')?"http://localhost:3001/exam/resetKey":"http://localhost:3001/exam/resetAnswer"
+        const response = await axios.post(url,{doc},{
             headers: {
               Authorization: data.userId,
             },
@@ -46,10 +52,14 @@ export default function QuestionTile({ item, index }: { item: any, index: number
         const doc={
             questionId : item._id,
             hash: item.hashID,
-            answer: value
+            answer: value,
+            examID:examID
            }
         // api call to save this particular answer
-        const response =await axios.post("http://localhost:3001/exam/saveAnswer",{doc},{
+        
+        const url =(path.split('/')[1]=='uploadAnswer')?"http://localhost:3001/exam/saveKey":"http://localhost:3001/exam/saveAnswer"
+        // const url =
+        const response =await axios.post(url,{doc},{
             headers: {
               Authorization: data.userId,
             },
@@ -64,8 +74,11 @@ export default function QuestionTile({ item, index }: { item: any, index: number
         const doc={
             hash:item.hashID,
             questionId : item._id,
+            doc:{examID:examID}
         }
-        const response = await axios.post("http://localhost:3001/exam/getAnswerForOne",doc,{
+        const url =(path.split('/')[1]=='uploadAnswer')? "http://localhost:3001/exam/getKeyForOne":"http://localhost:3001/exam/getAnswerForOne";
+        // const url =;
+        const response = await axios.post(url,doc,{
             headers: {
               Authorization: data.userId,
             },
@@ -75,12 +88,15 @@ export default function QuestionTile({ item, index }: { item: any, index: number
             // console.log(response.data.data.answer);
             setValue(response.data.data.answer)
           }
+          else if(response && response.data && response.data.response&& response.data.response.answer)
+          {
+            setValue(response.data.response.answer);
+          }
           return;
     }
     useEffect(() => {
         downloadAnswerForThisQuestion();
     }, []);
-
     return (
         <div>
             <h1>Question {index + 1} </h1>
