@@ -6,13 +6,17 @@ import { stat } from 'fs'
 export interface BankState {
   createdExams: Object[],
   givenExams: Object[],
-  questions:Object[]
+  questions:Object[],
+  selectedExam:Object,
+
 }
 
 const initialState: BankState = {
   createdExams: [],
   givenExams:[],
-  questions:[]
+  questions:[],
+  selectedExam:{},
+
 }
 
 export const bank = createSlice({
@@ -27,10 +31,16 @@ export const bank = createSlice({
       state.createdExams=[action.payload,...state.createdExams]
     },
     setQuestionsRedux:(state,action)=>{
-      state.questions=action.payload;
+      state.questions=[state.questions,...action.payload];
+    },
+    setSelectedExam:(state,action)=>{
+      state.selectedExam=action.payload
+    },
+    clearSelectedExam:(state)=>{
+      state.selectedExam={};
     }
   },
 })
-export const { setMyExams,setCreatedExams,setQuestionsRedux} = bank.actions
+export const { setMyExams,setCreatedExams,setQuestionsRedux,setSelectedExam,clearSelectedExam} = bank.actions
 
 export default bank.reducer

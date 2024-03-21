@@ -6,11 +6,13 @@ import { useAuth } from "@clerk/nextjs";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import InputTile from "./InputTile";
+import { useDispatch, useSelector } from "react-redux";
 export default function AddQuestions({hash}:{hash:String})
 {
     const data = useAuth();
     const [questionLength,setQuestionLength] = useState(0);
     const [questions,setQuestions] = useState([]);
+    // const dispatch= useDispatch();
     type ques={
         question:String, 
         image: String,
@@ -29,8 +31,8 @@ export default function AddQuestions({hash}:{hash:String})
     }
     async function submit()
   {
+    console.log(questions);
     // console.log(hash);
-        const doc= {};
         const response = await axios.post("http://localhost:3001/exam/addQues",{hashID:hash,questions:questions},{
         headers: {
           Authorization: data.userId,
@@ -46,6 +48,7 @@ export default function AddQuestions({hash}:{hash:String})
       });
     //   console.log("responsedddddd",response);
     response&&response.data&& response.data.data&&response.data.data.question&& setQuestions(response.data.data.question);
+
     //  console.log("questions",questions)
   }
   useEffect(()=>{

@@ -1,15 +1,17 @@
 "use client"
 import AddQuestions from "@/app/elements/AddQuestions";
+import { setSelectedExam } from "@/app/GlobalRedux/Features/counter/CounterSlice";
 import { RootState } from "@/app/GlobalRedux/store"
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@clerk/nextjs";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 
 export default function Comp({params}:{params:{id:Number}})
 {
     const data = useAuth();
+    const dispatch =useDispatch();
     const [ques,setQues] = useState([]);
     const [response,setResponse] = useState();
     const [examID,setExamID] = useState();
@@ -24,8 +26,14 @@ export default function Comp({params}:{params:{id:Number}})
           // setExamID(response)
           // console.log(response);
     }
+    function clearExam(){
+      dispatch(setSelectedExam({}))
+  }
     useEffect(()=>{
       downloadData();
+      return (()=>{
+        clearExam();
+      })
     },[])
      
     return (

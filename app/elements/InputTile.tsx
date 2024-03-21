@@ -1,41 +1,50 @@
-"use client"
-import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
+import { Input } from "@/components/ui/input";
 
-export default function InputTile({array,arrayIndex,setFunction}:{
-    array:any,
-    arrayIndex:number,
-    setFunction:any
-}){
-    function update()
-    {
-          const arr=array;
-          const newObj ={
-            question: question,
-            image:  image,
-            optionA: optionA,
-            optionB: optionB,
-            optionC: optionC,
-            optionD: optionD
-          }
-          arr.splice(arrayIndex,1,newObj);
-          setFunction([...arr]);
-        //   console.log(array);
-    }
-    const [question,setName]= useState(array[arrayIndex].question);
-    const [image,setLink] =useState(array[arrayIndex].image);
-    const [optionA,setOptionA] =useState(array[arrayIndex].optionA);
-    const [optionB,setOptionB] = useState(array[arrayIndex].optionB);
-    const [optionC,setOptionC] =useState(array[arrayIndex].optionC);
-    const [optionD,setOptionD] =useState(array[arrayIndex].optionD);
-    return (
-        <div className="flex flex-col gap-2">
-        <Input type="text" placeholder="Enter question text here ..." value={question}  onChange={(e)=>{setName(e.target.value);  update();}}/>
-        <Input type="text" placeholder="Enter question image link here ..." value={image}  onChange={(e)=>{setLink(e.target.value);  update();}}/>
-        <Input type="text" placeholder="Enter option a here ..." value={optionA}  onChange={(e)=>{setOptionA(e.target.value);  update();}}/>
-        <Input type="text" placeholder="Enter option b here ..." value={optionB}  onChange={(e)=>{setOptionB(e.target.value);  update();}}/>
-        <Input type="text" placeholder="Enter option c here ..." value={optionC}  onChange={(e)=>{setOptionC(e.target.value);  update();}}/>
-        <Input type="text" placeholder="Enter option d here ..." value={optionD}  onChange={(e)=>{setOptionD(e.target.value);  update();}}/>
-        </div>
-    )
+export default function InputTile({ array, arrayIndex, setFunction }: {
+  array: any[],
+  arrayIndex: number,
+  setFunction: React.Dispatch<React.SetStateAction<any[]>>
+}) {
+    const [question , setQuestion ] = useState( {
+        question:array[arrayIndex].question, 
+        image : array[arrayIndex].image, 
+        optionA :array[arrayIndex].optionA, 
+        optionB :array[arrayIndex].optionB, 
+        optionC :array[arrayIndex].optionC ,
+        optionD :array[arrayIndex].optionD
+    })
+ 
+  const onChange = ( e ) =>  {
+    const {name , value }  = e.target;
+     setQuestion({
+        ...question , 
+        [name] : value
+     }) ;
+    
+  }
+  useEffect(()=>{
+    let newArr= array;
+   newArr= newArr.map((item,index)=>{
+        console.log(index,arrayIndex);
+        if(index==arrayIndex)
+        {
+            return question;
+        }
+        return item;
+    })
+    setFunction(newArr);
+    console.log(newArr);
+  },[question])
+  return (
+    <div className="flex flex-col gap-2">
+      <Input type="text" placeholder="Enter question text here ..." value={question.question} onChange={onChange} name="question"  />
+      <Input type="text" placeholder="Enter question image link here ..." onChange={onChange}  value={question.image} name="image"   />
+      <Input type="text" placeholder="Enter option a here ..."  onChange={onChange}  value={question.optionA} name="optionA"    />
+      <Input type="text" placeholder="Enter option b here ..."  onChange={onChange}  value={question.optionB}  name="optionB"   />
+      <Input type="text" placeholder="Enter option c here ..."  onChange={onChange}  value={question.optionC}  name="optionC"   />
+      <Input type="text" placeholder="Enter option d here ..."  onChange={onChange}  value={question.optionD}  name="optionD"  />
+      
+    </div>
+  );
 }
