@@ -14,7 +14,7 @@ export default function CreateExam()
       StartTime,
       endTime,
       TimeLimit };
-      const response = await axios.post("http://localhost:3001/exam/finalSubmit",{doc},{
+      const response = await axios.post("http://localhost:3001/exam/examCreate",{doc},{
         headers: {
           Authorization: data.userId,
         },

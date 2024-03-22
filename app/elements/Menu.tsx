@@ -21,7 +21,7 @@ export default function Menu() {
     },
     {
         title:"Upload Answer Key",
-        href:"uploadAnswer"
+        href:"/uploadAnswer"
     },
   ];
   return (
