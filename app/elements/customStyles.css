@@ -17,13 +17,14 @@
    }
    
    .cards .card {
+    padding: 2px;
      display: flex;
      align-items: center;
      justify-content: center;
      flex-direction: column;
      text-align: center;
-     height: 100px;
-     width: 250px;
+     height: auto;
+     width: auto;
      border-radius: 10px;
      color: white;
      cursor: pointer;

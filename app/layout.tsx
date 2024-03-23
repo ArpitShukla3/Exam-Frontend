@@ -5,6 +5,9 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { Providers } from "./GlobalRedux/provider";
 import Home from "./elements/Home";
 const inter = Inter({ subsets: ["latin"] });
+import { config } from '@fortawesome/fontawesome-svg-core'
+import '@fortawesome/fontawesome-svg-core/styles.css'
+config.autoAddCss = false
 
 export const metadata: Metadata = {
   title: "Create Next App",
