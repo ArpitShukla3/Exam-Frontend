@@ -7,6 +7,8 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import InputTile from "./InputTile";
 import { useDispatch, useSelector } from "react-redux";
+import toast, { Toaster } from 'react-hot-toast'; // Import react-hot-toast
+
 export default function AddQuestions({hash}:{hash:String})
 {
     const data = useAuth();
@@ -33,22 +35,35 @@ export default function AddQuestions({hash}:{hash:String})
   {
     console.log(questions);
     // console.log(hash);
-        const response = await axios.post("http://localhost:3001/exam/addQues",{hashID:hash,questions:questions},{
+    try {
+        const response = await axios.post("https://exambackend-kok8.onrender.com/exam/addQues",{hashID:hash,questions:questions},{
         headers: {
           Authorization: data.userId,
         },
       });
+      toast.success('Questions submitted successfully!'); // Add success toast on submit
+    } catch (error) {
+      console.error("Error submitting questions:", error);
+      toast.error('Failed to submit questions.'); // Add error toast on failure
+    }
   }
   async function downlaodQuestions(hash){
     // console.log("responsed",hash);
-    const response = hash && await axios.get(`http://localhost:3001/exam/allQues?key=${hash}`,{
-        headers: {
-          Authorization: data.userId,
-        },
-      });
-    //   console.log("responsedddddd",response);
-    response&&response.data&& response.data.data&&response.data.data.question&& setQuestions(response.data.data.question);
-
+    try {
+        const response = hash && await axios.get(`https://exambackend-kok8.onrender.com/exam/allQues?key=${hash}`,{
+            headers: {
+              Authorization: data.userId,
+            },
+          });
+        //   console.log("responsedddddd",response);
+        if (response && response.data && response.data.data && response.data.data.question) {
+            setQuestions(response.data.data.question);
+            toast.success('Questions downloaded successfully!'); // Add success toast on download
+        }
+    } catch (error) {
+      console.error("Error downloading questions:", error);
+      toast.error('Failed to download questions.'); // Add error toast on failure
+    }
     //  console.log("questions",questions)
   }
   useEffect(()=>{
@@ -86,6 +101,7 @@ export default function AddQuestions({hash}:{hash:String})
                 questions && <Button onClick={submit}>Sumbit</Button>
             }
         </div>
+        <Toaster position="top-right" /> {/* Add Toaster component to display toasts */}
         </>
     )
 }

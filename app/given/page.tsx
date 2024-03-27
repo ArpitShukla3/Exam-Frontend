@@ -9,13 +9,15 @@ import { setMyExams,setCreatedExams} from "../GlobalRedux/Features/counter/Count
 import CreateExam from "../elements/CreateExam";
 import CustomCards from "../elements/CustomCard";
 import GiveExam from "../elements/GiveExam";
+import toast, { Toaster } from 'react-hot-toast'; // Import react-hot-toast
+
 export default function Home() {
   const [loaded,setLoaded] = useState(false);
   const { userId } = useAuth();
   const dispatch = useDispatch();
   async function downloadData() {
     try {
-      const response = await axios.get("http://localhost:3001/exam/myExamsGiven", {
+      const response = await axios.get("https://exambackend-kok8.onrender.com/exam/myExamsGiven", {
         headers: {
           Authorization: userId,
         },
@@ -24,8 +26,10 @@ export default function Home() {
       // console.log(response.data.examsGiven)
      dispatch(setMyExams(response.data.examsGiven));
      setLoaded(true);
+     toast.success('Data loaded successfully!'); // Show success toast
     } catch (error) {
       console.error("Error fetching data:", error);
+      toast.error('Failed to load data.'); // Show error toast
     }
   }
   useEffect(() => {
@@ -34,6 +38,7 @@ export default function Home() {
 
   return (
     <div className="p-4">
+      <Toaster position="top-right" /> {/* Add Toaster component to display toasts */}
       <div className=" flex  items-center  justify-between px-6">
         <div className="min-w-0 flex-1">
           <h2 className="text-2xl font-bold leading-7 text-gray-900 truncate  text-3xl  tracking-tight">
@@ -66,6 +71,7 @@ export default function Home() {
       <div className="p-2 lg:mt-20">
         {loaded && <CustomCards  type="exam"/>}
       </div>
+      <Toaster/>
     </div>
   );
 }

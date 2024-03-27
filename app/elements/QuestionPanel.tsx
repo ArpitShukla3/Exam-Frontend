@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { useAuth } from "@clerk/nextjs";
 import { usePathname } from "next/navigation";
+import toast, { Toaster } from 'react-hot-toast'; // Import react-hot-toast
 
 export default function QuestionPanel() {
   const authData = useAuth();
@@ -15,16 +16,21 @@ export default function QuestionPanel() {
     useSelector((state) => state.examBank.questions)
   );
   async function SubmitFinal() {
-    const url =(path.split('/')[1]=='uploadAnswer')? "http://localhost:3001/exam/generateResult": "http://localhost:3001/exam/finalSubmit"; 
-    // const url = 
-    const response = await axios.post(url,
-     { examID: examID,doc:{examID:examID}},
-      {
-        headers: {
-          Authorization: authData.userId,
-        },
-      }
-    );
+    const url =(path.split('/')[1]=='uploadAnswer')? "https://exambackend-kok8.onrender.com/exam/generateResult": "https://exambackend-kok8.onrender.com/exam/finalSubmit"; 
+    try {
+      const response = await axios.post(url,
+       { examID: examID,doc:{examID:examID}},
+        {
+          headers: {
+            Authorization: authData.userId,
+          },
+        }
+      );
+      toast.success('Submission successful!');
+    } catch (error) {
+      console.error("Error during submission:", error);
+      toast.error('Failed to submit.');
+    }
   }
   useEffect(() => {}, []);
   return (
@@ -38,6 +44,7 @@ export default function QuestionPanel() {
           );
         })}
       <Button onClick={SubmitFinal}>{(path.split('/')[1]=="uploadAnswer")?"Generate Results":"Submit Final"} </Button>
+      <Toaster/>
     </div>
   );
 }

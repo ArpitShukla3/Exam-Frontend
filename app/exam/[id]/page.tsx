@@ -1,11 +1,13 @@
 "use client"
 import { useEffect, useState } from "react"
-import { useDispatch, UseDispatch, useSelector } from "react-redux"
-import { clearSelectedExam, setQuestionsRedux, setSelectedExam } from "@/app/GlobalRedux/Features/counter/CounterSlice"
+import { useDispatch, useSelector } from "react-redux"
+import { clearSelectedExam, setQuestionsRedux } from "@/app/GlobalRedux/Features/counter/CounterSlice"
 import axios from "axios"
 import { useAuth } from "@clerk/nextjs"
 import QuestionPanel from "@/app/elements/QuestionPanel"
 import Timer from "@/app/elements/Timer"
+import toast, { ToastBar, Toaster } from 'react-hot-toast';
+
 export default function Home({params}:{params:{id:number}})
 {
     const data = useAuth();
@@ -14,22 +16,24 @@ export default function Home({params}:{params:{id:number}})
     const [loaded,setLoaded] = useState(false);
     async function downloadQuestions()
     {
-        // console.log(examDetails)
-        const response = await axios.get(`http://localhost:3001/exam/allQues?key=${examDetails.hashID}`,{
-            headers: {
-              Authorization: data.userId,
-            },
-          })
-          
-        //   console.log(response.data.data.question);
-          dispatch(setQuestionsRedux(response.data.data.question));
-          setLoaded(true);
+        try {
+          const response = await axios.get(`https://exambackend-kok8.onrender.com/exam/allQues?key=${examDetails.hashID}`,{
+              headers: {
+                Authorization: data.userId,
+              },
+            })
+            
+            dispatch(setQuestionsRedux(response.data.data.question));
+            setLoaded(true);
+            toast.success('Questions loaded successfully!');
+        } catch (error) {
+            toast.error('Failed to load questions.');
+        }
     }
     function clearExam(){
       dispatch(clearSelectedExam())
-  }
+    }
     useEffect(()=>{
-      // alert("You cannot reload this page again. load the page from given exam menu");  
         downloadQuestions();
         return (()=>{
           clearExam();
@@ -39,6 +43,7 @@ export default function Home({params}:{params:{id:number}})
     <div className="flex flex-row ">
     { loaded && <QuestionPanel/>}
     <Timer/>
+    <Toaster/>
     </div>
     )
 }

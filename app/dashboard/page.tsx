@@ -19,6 +19,7 @@ import {
   Legend,
   PieController
 } from 'chart.js';
+import toast from 'react-hot-toast'; // Import react-hot-toast
 
 ChartJS.register(
   CategoryScale,
@@ -48,7 +49,7 @@ export default function Example() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/exam/dashboard', {
+        const response = await axios.get('https://exambackend-kok8.onrender.com/exam/dashboard', {
           headers: {
             Authorization: data.userId,
           },
@@ -62,6 +63,7 @@ export default function Example() {
         });
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
+        toast.error('Error fetching dashboard data:', error); // Show error toast
       }
     };
 

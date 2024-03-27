@@ -2,6 +2,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
+import toast, { Toaster } from 'react-hot-toast'; // Import react-hot-toast
 
 const Timer = () => {
   const TimeLimit = useSelector((state) => state.examBank.selectedExam.TimeLimit);
@@ -11,7 +12,7 @@ const Timer = () => {
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
-  //returns remaining microseconds representaion, where timeString-> '00:00'
+  //returns remaining microseconds representation, where timeString-> '00:00'
   const timeRemaining = (timeString:String):number  => {
     const [minutes, seconds] = timeString.split(":");
     const numMinutes = Number(minutes);
@@ -54,12 +55,13 @@ const Timer = () => {
       setMinutes(0);
       setSeconds(0);
       localStorage.removeItem(`timeRemaining` + id);
+      toast.error('Time is up!'); // Show error toast when time is up
     }
     if(time<=0){
       localStorage.removeItem(`timeRemaining`+id);
     (async () => {
       try {
-        const url = "http://localhost:3001/exam/finalSubmit";
+        const url = "https://exambackend-kok8.onrender.com/exam/finalSubmit";
         const response = await fetch(url, {
           method: 'POST',
           headers: {
@@ -70,11 +72,14 @@ const Timer = () => {
         });
         if (response.ok) {
           window.location.href = "/given";
+          toast.success('Final results submitted successfully!'); // Show success toast on successful submission
         } else {
           console.error('Failed to submit final results');
+          toast.error('Failed to submit final results.'); // Show error toast on failure
         }
       } catch (error) {
         console.error('Error submitting final results:', error);
+        toast.error('Error submitting final results.'); // Show error toast on catch
       }
     })();
     }
@@ -96,6 +101,7 @@ const Timer = () => {
       Minutes: {minutes} <br />
       Seconds: {seconds}
       <br />
+      <Toaster/>
     </div>
   );
 };

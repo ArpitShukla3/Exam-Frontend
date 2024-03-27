@@ -5,6 +5,7 @@ import axios from "axios";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import toast, { Toaster } from 'react-hot-toast'; // Import react-hot-toast
 
 export default function QuestionTile({ item, index }: { item: any, index: number }) {
     const path =usePathname();
@@ -21,6 +22,7 @@ export default function QuestionTile({ item, index }: { item: any, index: number
             setImageUrl(item.image + `?reload=${reloadCount + 1}`);
         } else {
             console.error("Failed to load image after retrying.");
+            toast.error("Failed to load image after retrying."); // Show error toast
         }
     };
     function update(e) {
@@ -35,18 +37,24 @@ export default function QuestionTile({ item, index }: { item: any, index: number
             questionId : item._id,
             examID:examID
         }
-        const url =(path.split('/')[1]=='uploadAnswer')?"http://localhost:3001/exam/resetKey":"http://localhost:3001/exam/resetAnswer"
-        const response = await axios.post(url,{doc},{
-            headers: {
-              Authorization: data.userId,
-            },
-          })
-          setSubmitBtnStyle("bg-gray-600");
-        //api call to delete this particular answer
+        const url =(path.split('/')[1]=='uploadAnswer')?"https://exambackend-kok8.onrender.com/exam/resetKey":"https://exambackend-kok8.onrender.com/exam/resetAnswer"
+        try {
+            const response = await axios.post(url,{doc},{
+                headers: {
+                Authorization: data.userId,
+                },
+            })
+            setSubmitBtnStyle("bg-gray-600");
+            toast.success('Reset successful!'); // Show success toast
+        } catch (error) {
+            console.error('Reset failed:', error);
+            toast.error('Reset failed.'); // Show error toast
+        }
     }
     async function Submit() {
         if(!value)
         {
+            toast.error('No answer selected.'); // Show error toast if no answer selected
             return;
         }
         const doc={
@@ -55,19 +63,19 @@ export default function QuestionTile({ item, index }: { item: any, index: number
             answer: value,
             examID:examID
            }
-        // api call to save this particular answer
-        
-        const url =(path.split('/')[1]=='uploadAnswer')?"http://localhost:3001/exam/saveKey":"http://localhost:3001/exam/saveAnswer"
-        // const url =
-        const response =await axios.post(url,{doc},{
-            headers: {
-              Authorization: data.userId,
-            },
-          })
-          setSubmitBtnStyle("bg-gray-600");
-        //   if(response.data.status === "success"){
-        //     }
-        //save it into redux
+        const url =(path.split('/')[1]=='uploadAnswer')?"https://exambackend-kok8.onrender.com/exam/saveKey":"https://exambackend-kok8.onrender.com/exam/saveAnswer"
+        try {
+            const response =await axios.post(url,{doc},{
+                headers: {
+                Authorization: data.userId,
+                },
+            })
+            setSubmitBtnStyle("bg-gray-600");
+            toast.success('Answer saved successfully!'); // Show success toast
+        } catch (error) {
+            console.error('Save failed:', error);
+            toast.error('Save failed.'); // Show error toast
+        }
     }
     async function downloadAnswerForThisQuestion()
     {
@@ -76,23 +84,26 @@ export default function QuestionTile({ item, index }: { item: any, index: number
             questionId : item._id,
             doc:{examID:examID}
         }
-        const url =(path.split('/')[1]=='uploadAnswer')? "http://localhost:3001/exam/getKeyForOne":"http://localhost:3001/exam/getAnswerForOne";
-        // const url =;
-        const response = await axios.post(url,doc,{
-            headers: {
-              Authorization: data.userId,
-            },
-          })
-          if(response && response.data &&response.data.data && response.data.data.answer)
-          {
-            // console.log(response.data.data.answer);
-            setValue(response.data.data.answer)
-          }
-          else if(response && response.data && response.data.response&& response.data.response.answer)
-          {
-            setValue(response.data.response.answer);
-          }
-          return;
+        const url =(path.split('/')[1]=='uploadAnswer')? "https://exambackend-kok8.onrender.com/exam/getKeyForOne":"https://exambackend-kok8.onrender.com/exam/getAnswerForOne";
+        try {
+            const response = await axios.post(url,doc,{
+                headers: {
+                Authorization: data.userId,
+                },
+            })
+            if(response && response.data &&response.data.data && response.data.data.answer)
+            {
+                setValue(response.data.data.answer)
+            }
+            else if(response && response.data && response.data.response&& response.data.response.answer)
+            {
+                setValue(response.data.response.answer);
+            }
+            toast.success('Answer downloaded successfully!'); // Show success toast
+        } catch (error) {
+            console.error('Download failed:', error);
+            toast.error('Download failed.'); // Show error toast
+        }
     }
     useEffect(() => {
         downloadAnswerForThisQuestion();
@@ -127,6 +138,7 @@ export default function QuestionTile({ item, index }: { item: any, index: number
                 <Button className={submitBtnStyle} onClick={Submit}>Save</Button>
                 <Button variant="destructive" onClick={Reset}>Reset</Button>
             </div>
+            <Toaster/>
         </div>
     )
 }

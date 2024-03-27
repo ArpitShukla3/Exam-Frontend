@@ -8,21 +8,25 @@ import { UseDispatch,useDispatch,useSelector } from "react-redux";
 import { setMyExams,setCreatedExams} from "../GlobalRedux/Features/counter/CounterSlice"
 import CreateExam from "../elements/CreateExam";
 import CustomCards from "../elements/CustomCard";
+import toast, { Toaster } from 'react-hot-toast'; // Import react-hot-toast
+
 export default function Home() {
   const [loaded,setLoaded] = useState(false);
   const { userId } = useAuth();
   const dispatch = useDispatch();
   async function downloadData() {
     try {
-      const response = await axios.get("http://localhost:3001/exam/myExamsCreated", {
+      const response = await axios.get("https://exambackend-kok8.onrender.com/exam/myExamsCreated", {
         headers: {
           Authorization: userId,
         },
       });
      dispatch(setCreatedExams(response.data.data));
      setLoaded(true);
+     toast.success("Data fetched successfully"); // Display success toast
     } catch (error) {
       console.error("Error fetching data:", error);
+      toast.error("Failed to fetch data"); // Display error toast
     }
   }
   useEffect(() => {
@@ -41,6 +45,7 @@ export default function Home() {
       <div className="p-2 lg:mt-20">
         {loaded && <CustomCards  type="uploadAnswer"/>}
       </div>
+      <Toaster/>
     </div>
   );
 }

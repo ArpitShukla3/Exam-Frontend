@@ -5,20 +5,30 @@ import { Input } from "@/components/ui/input";
 import axios from "axios";
 import { useState } from "react";
 import { useAuth } from '@clerk/clerk-react';
+import { Toaster, useToaster } from 'react-hot-toast'; // Import react-hot-toast
+
 export default function CreateExam()
 {
   const data = useAuth();
+  const toaster = useToaster(); // Initialize toaster
+
   async function submit()
   {
    const doc= { Name,
       StartTime,
       endTime,
       TimeLimit };
-      const response = await axios.post("http://localhost:3001/exam/examCreate",{doc},{
-        headers: {
-          Authorization: data.userId,
-        },
-      });
+      try {
+        const response = await axios.post("https://exambackend-kok8.onrender.com/exam/examCreate",{doc},{
+          headers: {
+            Authorization: data.userId,
+          },
+        });
+        toaster.success('Exam created successfully!'); // Show success toast using toaster
+      } catch (error) {
+        console.error('Error creating exam:', error);
+        toaster.error('Failed to create exam.'); // Show error toast using toaster
+      }
   }
   const [Name,setName]= useState("");
   const [StartTime,setStartTime]= useState("");
@@ -31,6 +41,7 @@ export default function CreateExam()
        <Input type="datetime-local" placeholder="endTime" value={endTime}  onChange={(e)=>setendTime(e.target.value)}/>
        <Input type="time" placeholder="TimeLimit" value={TimeLimit} onChange={(e)=>setTimeLimit(e.target.value)}/>
        <DialogClose><Button onClick={submit}>Submit</Button></DialogClose>
+       <Toaster/>
   </div>
   )
 }
