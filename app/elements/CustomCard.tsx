@@ -45,6 +45,7 @@ export default function CustomCards({ type }: { type: string }) {  // type -> "e
                                 <Link href={`/${type}/${index}`}  onClick={()=>setExam({item})}>
                                     <p className="tip">{item.Name}</p>
                                     <div className="second-text">
+                                        <h3>Secret Key : {item.hashID}</h3>
                                         <h3>Start Time :{formatDateTime(item.StartTime)}</h3>
                                         <h3>End Time : {formatDateTime(item.endTime)}</h3>
                                     </div>

@@ -36,12 +36,48 @@ const Timer = () => {
       return Date.parse(t);
   }
   const getTime = () => {
-    const time = getMinimum(timeRemaining(TimeLimit),EndTime(endTime)-Date.now(),Number(localStorage.getItem(`timeRemaining`+id)||Number.MAX_SAFE_INTEGER));
-    setDays(Math.floor(time / (1000 * 60 * 60 * 24)));
-    setHours(Math.floor((time / (1000 * 60 * 60)) % 24));
-    setMinutes(Math.floor((time / 1000 / 60) % 60));
-    setSeconds(Math.floor((time / 1000) % 60));
-    localStorage.setItem(`timeRemaining`+id,''+(time-1000))
+    const currentTime = Date.now();
+    const endTimeInMs = EndTime(endTime);
+    const timeLimitInMs = timeRemaining(TimeLimit);
+    const storedTimeRemaining = Number(localStorage.getItem(`timeRemaining` + id) || Number.MAX_SAFE_INTEGER);
+    const time = Math.min(timeLimitInMs, endTimeInMs - currentTime, storedTimeRemaining);
+
+    if (time > 0) {
+      setDays(Math.floor(time / (1000 * 60 * 60 * 24)));
+      setHours(Math.floor((time / (1000 * 60 * 60)) % 24));
+      setMinutes(Math.floor((time / 1000 / 60) % 60));
+      setSeconds(Math.floor((time / 1000) % 60));
+      localStorage.setItem(`timeRemaining` + id, '' + Math.max(0, time - 1000));
+    } else {
+      setDays(0);
+      setHours(0);
+      setMinutes(0);
+      setSeconds(0);
+      localStorage.removeItem(`timeRemaining` + id);
+    }
+    if(time<=0){
+      localStorage.removeItem(`timeRemaining`+id);
+    (async () => {
+      try {
+        const url = "http://localhost:3001/exam/finalSubmit";
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': id, // Assuming 'id' is a suitable authorization token
+          },
+          body: JSON.stringify({ examID: id }),
+        });
+        if (response.ok) {
+          window.location.href = "/given";
+        } else {
+          console.error('Failed to submit final results');
+        }
+      } catch (error) {
+        console.error('Error submitting final results:', error);
+      }
+    })();
+    }
   };
   useEffect(() => {
     const interval = setInterval(() => getTime(), 1000);

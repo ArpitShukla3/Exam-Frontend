@@ -1,4 +1,6 @@
-import { UserButton, UserProfile, auth } from "@clerk/nextjs"
+"use client";
+import { UserButton, UserProfile, useAuth } from "@clerk/nextjs"
+import { useUser } from "@clerk/clerk-react";
 import {
     Drawer,
     DrawerClose,
@@ -14,11 +16,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faHome } from '@fortawesome/free-solid-svg-icons';
 export default function Home()
 {
+  const {isSignedIn} = useAuth();
     return (
         <div className="z-2 sm:w-screen">
-          <Drawer direction="left" >
+         <Drawer direction="left" >
            <DrawerTrigger>
-           <div className="ml-2 mt-2"><FontAwesomeIcon icon={faBars} size="2xl" /></div>
+           {isSignedIn && <div className="ml-2 mt-2"><FontAwesomeIcon icon={faBars} size="2xl" /></div>}
             </DrawerTrigger> 
             <DrawerContent style={{ display: 'flex', flexDirection: 'column', height: '100vh' , width:'20%'}}>
               <DrawerHeader>
@@ -34,7 +37,7 @@ export default function Home()
               <UserButton/>
               </DrawerFooter>
             </DrawerContent>
-          </Drawer>
+          </Drawer> 
      
         </div>
       )
